@@ -1,3 +1,5 @@
+import { Box, Button, ListItem } from "@mui/material";
+
 export enum TodoState {
   Completed,
   Pending,
@@ -22,7 +24,7 @@ export const TodoElement = ({
   deleteTodo,
 }: TodoElementProps) => {
   return (
-    <li key={`${index}-${todo.title}`}>
+    <ListItem key={`${index}-${todo.title}`}>
       <span
         onClick={() =>
           updateTodo(
@@ -36,7 +38,9 @@ export const TodoElement = ({
       >
         {todo.title}
       </span>
-      <button onClick={() => deleteTodo(index)}>Delete</button>
-    </li>
+      <Button variant="outlined" onClick={() => deleteTodo(index)}>
+        Delete
+      </Button>
+    </ListItem>
   );
 };

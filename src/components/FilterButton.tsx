@@ -1,3 +1,5 @@
+import { Button } from "@mui/material";
+
 export enum Filter {
   All = "All",
   Completed = "Completed",
@@ -10,5 +12,13 @@ interface FilterButtonProps {
 }
 
 export const FilterButton = ({ filter, setFilter }: FilterButtonProps) => {
-  return <button onClick={() => setFilter(filter)}>{filter}</button>;
+  return (
+    <Button
+      variant="contained"
+      color="secondary"
+      onClick={() => setFilter(filter)}
+    >
+      {filter}
+    </Button>
+  );
 };

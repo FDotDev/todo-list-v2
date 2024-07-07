@@ -1,35 +1,77 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import { Todo, TodoElement, TodoState } from "./components/TodoElelement";
+import { Filter, FilterButton } from "./components/FilterButton";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [filter, setFilter] = useState<Filter>(Filter.All);
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [newTodo, setNewTodo] = useState<string>("");
+
+  const updateTodo = (index: number, state: TodoState) => {
+    setTodos((oldTodos) => {
+      const newTodos = [...oldTodos];
+      newTodos[index].state = state;
+      return newTodos;
+    });
+  };
+
+  const deleteTodo = (index: number) => {
+    setTodos((oldTodos) => {
+      const newTodos = [...oldTodos];
+      newTodos.splice(index, 1);
+      return newTodos;
+    });
+  };
 
   return (
     <>
+      <h1>Todo List V1</h1>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+        <input
+          type="text"
+          placeholder="Add task..."
+          onChange={(x) => setNewTodo(x.target.value)}
+        />
+        <button
+          onClick={() => {
+            setTodos((x) => [
+              ...x,
+              { title: newTodo, state: TodoState.Pending },
+            ]);
+          }}
+        >
+          Add
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div>
+        <FilterButton filter={Filter.All} setFilter={setFilter} />
+        <FilterButton filter={Filter.Completed} setFilter={setFilter} />
+        <FilterButton filter={Filter.Pending} setFilter={setFilter} />
+      </div>
+      <ul>
+        {todos
+          .filter((x) => {
+            switch (filter) {
+              case Filter.All:
+                return true;
+              case Filter.Completed:
+                return x.state === TodoState.Completed;
+              case Filter.Pending:
+                return x.state === TodoState.Pending;
+            }
+          })
+          .map((todo, index) => (
+            <TodoElement
+              todo={todo}
+              index={index}
+              updateTodo={updateTodo}
+              deleteTodo={deleteTodo}
+            />
+          ))}
+      </ul>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

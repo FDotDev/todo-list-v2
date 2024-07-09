@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { AddTodo, Filter, FilterButton } from "../components";
-import { Divider, IconButton } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  IconButton,
+  Snackbar,
+} from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import { v4 } from "uuid";
 
@@ -24,6 +34,7 @@ export interface Todo {
 export const Home = () => {
   const [filter, setFilter] = useState<Filter>(Filter.All);
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [todoToDelete, setTodoToDelete] = useState<string | null>(null);
 
   const addTodo = (title: string) => {
     setTodos((oldTodos) => [
@@ -63,8 +74,11 @@ export const Home = () => {
       headerName: "Actions",
       field: "id",
       sortable: false,
-      cellRenderer: (params: ICellRendererParams<Todo, string>) => (
-        <IconButton onClick={() => deleteTodo(params.value ?? "")}>
+      cellRenderer: (params: ICellRendererParams<Todo>) => (
+        <IconButton
+          onClick={() => setTodoToDelete(params.value)}
+          color="primary"
+        >
           <Delete />
         </IconButton>
       ),
@@ -82,6 +96,15 @@ export const Home = () => {
     }
   });
 
+  const onCancelTodoToDelete = () => setTodoToDelete(null);
+
+  const onDeleteTodo = () => {
+    if (todoToDelete !== null) {
+      deleteTodo(todoToDelete);
+      setTodoToDelete(null);
+    }
+  };
+
   return (
     <div className="home-container">
       <h1>Todo List V2</h1>
@@ -98,6 +121,17 @@ export const Home = () => {
       >
         <AgGridReact rowData={filteredTodos} columnDefs={colDefs} />
       </div>
+      {/* TODO: Add alert when a todo is deleted */}
+      <Dialog open={todoToDelete !== null} onClose={onCancelTodoToDelete}>
+        <DialogTitle>Are You Sure to Delete the Todo?</DialogTitle>
+        <DialogContent>This action can't be undone</DialogContent>
+        <DialogActions>
+          <Button onClick={onCancelTodoToDelete}>CANCEL</Button>
+          <Button color="error" onClick={onDeleteTodo}>
+            DELETE
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

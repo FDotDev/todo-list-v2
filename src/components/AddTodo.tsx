@@ -1,15 +1,23 @@
 import { Add } from "@mui/icons-material";
 import { IconButton, TextField } from "@mui/material";
-import { Todo, TodoState } from "./TodoElement";
 import { useState } from "react";
 import "./AddTodo.css";
 
 interface AddTodoProps {
-  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
+  addTodo: (title: string) => void;
 }
 
-export const AddTodo = ({ setTodos }: AddTodoProps) => {
-  const [newTodo, setNewTodo] = useState<string>("");
+export const AddTodo = ({ addTodo }: AddTodoProps) => {
+  const [title, setTitle] = useState<string>("");
+
+  const onAddTodo = () => {
+    addTodo(title);
+    setTitle("");
+  };
+
+  const onTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  };
 
   return (
     <div className="add-todo-container">
@@ -17,16 +25,15 @@ export const AddTodo = ({ setTodos }: AddTodoProps) => {
         size="small"
         label="New Todo..."
         variant="outlined"
-        onChange={(x) => setNewTodo(x.target.value)}
+        value={title}
+        onChange={onTitleChange}
       />
       <IconButton
         aria-label="add todo"
         color="primary"
-        disabled={newTodo === ""}
+        disabled={title === ""}
         size="small"
-        onClick={() => {
-          setTodos((x) => [...x, { title: newTodo, state: TodoState.Pending }]);
-        }}
+        onClick={onAddTodo}
       >
         <Add />
       </IconButton>

@@ -2,16 +2,15 @@ import { Add } from "@mui/icons-material";
 import { IconButton, TextField } from "@mui/material";
 import { useState } from "react";
 import "./AddTodo.css";
+import { useTodos } from "../hooks";
+import { v4 } from "uuid";
 
-interface AddTodoProps {
-  addTodo: (title: string) => void;
-}
-
-export const AddTodo = ({ addTodo }: AddTodoProps) => {
+export const AddTodo = () => {
+  const { upsertTodo } = useTodos();
   const [title, setTitle] = useState<string>("");
 
   const onAddTodo = () => {
-    addTodo(title);
+    upsertTodo({ id: v4(), title, completed: false });
     setTitle("");
   };
 

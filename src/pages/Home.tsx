@@ -12,7 +12,7 @@ import {
 import { AgGridReact } from "ag-grid-react";
 import { v4 } from "uuid";
 import { Delete } from "@mui/icons-material";
-import { useTodos } from "../hooks";
+import { useAlert, useTodos } from "../hooks";
 
 import type {
   ColDef,
@@ -29,6 +29,7 @@ export const Home = () => {
   const [filter, setFilter] = useState<Filter>(Filter.All);
   const { todosQuery, upsertTodo, deleteTodo } = useTodos();
   const [todoToDelete, setTodoToDelete] = useState<string | null>(null);
+  const { showAlert } = useAlert();
 
   const onCellValueChanged = (event: NewValueParams) => upsertTodo(event.data);
 
@@ -72,6 +73,7 @@ export const Home = () => {
       deleteTodo(todoToDelete, {
         onSuccess: () => {
           setTodoToDelete(null);
+          showAlert("Todo deleted successfully", "success");
         },
       });
     }
